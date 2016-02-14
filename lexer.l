@@ -13,7 +13,7 @@
 %x LINE_COMMENT
 %x COMMENT
 %x STRING
-%x ARRAY_CONTENT
+%x ARRAY_RANGE
 
 %%
 
@@ -34,10 +34,11 @@
 <STRING>.					{ printf(yytext); }
 
 
-"["							{printf("  ");BEGIN(ARRAY_CONTENT);}
-<ARRAY_CONTENT>\.			{}
-<ARRAY_CONTENT>[0-9]		{}
-"]"							{printf("  ");BEGIN(INITIAL);}
+"["							{printf("Begin array range");BEGIN(ARRAY_RANGE);}
+<ARRAY_RANGE>\.				{printf(yytext);}
+<ARRAY_RANGE>[0-9]			{printf(yytext);}
+<ARRAY_RANGE>"]"			{printf("End array range");BEGIN(INITIAL);}
+<ARRAY_RANGE>.				{printf(yytext);}
 
 Integer                     { printf("Integer type  "); }
 Cardinal					{ printf("Cardinal type  "); }

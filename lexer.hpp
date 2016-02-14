@@ -218,7 +218,7 @@ extern char *yytext;
 #define LINE_COMMENT 1
 #define COMMENT 2
 #define STRING 3
-#define ARRAY_CONTENT 4
+#define ARRAY_RANGE 4
 
 #endif
 
@@ -322,7 +322,7 @@ extern int yylex (void);
 #undef YY_DECL
 #endif
 
-#line 105 "lexer.l"
+#line 106 "lexer.l"
 
 
 #line 329 "lexer.hpp"
