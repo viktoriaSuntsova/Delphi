@@ -17,17 +17,22 @@
 
 %%
 
-"//"						{printf("Start of line comment "); BEGIN(LINE_COMMENT);}
+"//"						{ printf("Start of line comment - "); BEGIN(LINE_COMMENT);}
 "(*"						{ printf("Start of comment "); BEGIN(COMMENT);}
-"{"							{printf("Start of comment "); BEGIN(COMMENT);}
+"{"							{ printf("Start of comment "); BEGIN(COMMENT);}
 
-<LINE_COMMENT>\n			{ printf("End of line comment\n"); BEGIN(INITIAL);}
-<COMMENT>"*)"			    { printf("End of comment "); BEGIN(INITIAL);}
-<COMMENT>"}"			    { printf("End of comment "); BEGIN(INITIAL);}
+<LINE_COMMENT>\n			{ printf("  End of line comment\n"); BEGIN(INITIAL);}
+<LINE_COMMENT>.*			{ printf(yytext); }
+<COMMENT>"*)"			    { printf("\nEnd of comment "); BEGIN(INITIAL);}
+<COMMENT>"}"			    { printf("\nEnd of comment "); BEGIN(INITIAL);}
+<COMMENT>.|\n     			{ printf(yytext); }
 
-"\'"						{printf("Start const string "); BEGIN(STRING);}
-<STRING>"\'\'"	            {printf("Continue const string "); BEGIN(STRING);}
-<STRING>"\'"			    {printf("End const string "); BEGIN(INITIAL);}
+
+"'"							{printf("Start const string "); BEGIN(STRING);}
+<STRING>"''"	            {printf("Continue const string "); BEGIN(STRING);}
+<STRING>"'"					{printf(" End const string "); BEGIN(INITIAL);}
+<STRING>.					{ printf(yytext); }
+
 
 "["							{printf("  ");BEGIN(ARRAY_CONTENT);}
 <ARRAY_CONTENT>\.			{}
