@@ -17,90 +17,91 @@
 
 %%
 
-"//"						{ printf("Start of line comment - "); BEGIN(LINE_COMMENT);}
-"(*"						{ printf("Start of comment "); BEGIN(COMMENT);}
-"{"							{ printf("Start of comment "); BEGIN(COMMENT);}
+"//"						{ BEGIN(LINE_COMMENT);}
+"(*"						{ BEGIN(COMMENT);}
+"{"							{ BEGIN(COMMENT);}
 
-<LINE_COMMENT>\n			{ printf("  End of line comment\n"); BEGIN(INITIAL);}
-<LINE_COMMENT>.*			{ printf(yytext); }
-<COMMENT>"*)"			    { printf("\nEnd of comment "); BEGIN(INITIAL);}
-<COMMENT>"}"			    { printf("\nEnd of comment "); BEGIN(INITIAL);}
-<COMMENT>.|\n     			{ printf(yytext); }
-
-
-"'"							{printf("Start const string "); BEGIN(STRING);}
-<STRING>"''"	            {printf("Continue const string "); BEGIN(STRING);}
-<STRING>"'"					{printf(" End const string "); BEGIN(INITIAL);}
-<STRING>.					{ printf(yytext); }
+<LINE_COMMENT>\n			{ BEGIN(INITIAL);}
+<LINE_COMMENT>.*			{  }
+<COMMENT>"*)"			    {  BEGIN(INITIAL);}
+<COMMENT>"}"			    { BEGIN(INITIAL);}
+<COMMENT>.|\n     			{  }
 
 
-"["							{printf("Begin array range");BEGIN(ARRAY_RANGE);}
-<ARRAY_RANGE>\.				{printf(yytext);}
-<ARRAY_RANGE>[0-9]			{printf(yytext);}
-<ARRAY_RANGE>"]"			{printf("End array range");BEGIN(INITIAL);}
-<ARRAY_RANGE>.				{printf(yytext);}
-
-Integer                     { printf("Integer type  "); }
-Cardinal					{ printf("Cardinal type  "); }
-ShortInt					{ printf("ShortInt type  "); }
-Int64						{ printf("Int64 type  "); }
-Byte						{ printf("Byte type  "); }					
-Word						{ printf("Word type  "); }
-Real						{ printf("Real type  "); }
-Real48						{ printf("Real48 type  "); }
-Singl						{ printf("Singl type  "); }
-Double						{ printf("Double type  "); }
-Extended					{ printf("Extended type  "); }
-Comp						{ printf("Comp type  "); }
-Currency					{ printf("Currency type  "); }
-Boolean						{ printf("Boolean type  "); }
-var							{ printf("Start variable declaration  "); }
-const						{ printf("Start constant declaration  "); }
-begin						{ printf("BEGIN  "); }
-end							{ printf("END  "); }
-;							{ printf(";  "); }
-type						{ printf("Start type description  "); }
-array						{ printf("Start array description  "); }
-of							{ printf("OF  "); }
-nil							{ printf("NULL "); }
-record						{ printf("Start record description "); }
-file						{ printf("Start file declaration "); }
-set							{ printf("Start file declaration "); }
-if							{ printf("IF "); }
-in							{ printf("IN "); }
-then						{ printf("THEN "); }
-else						{ printf("ELSE "); }
-true						{ printf("TRUE "); }
-false						{ printf("FALSE "); }
-for							{ printf("FOR "); }
-do							{ printf("DO "); }
-downto						{ printf("DOWNTO "); }
-while						{ printf("WHILE "); }
-repeat						{ printf("REPEAT "); }
-until						{ printf("UNTIL "); }
-Break						{ printf("BREAK "); }
-Continue					{ printf("CONTINUE "); }
-goto						{ printf("GOTO "); }
-label						{ printf("Start label declaration "); }
-Pointer						{ printf("Start pointer declaration "); }
-:=							{ printf("assignment statement  "); }
-=							{ printf("  "); }
-\^							{ printf("pointer  "); }
-:							{ printf(":  "); }
-\(							{ printf("(  "); }
-\)							{ printf(")  "); }
-\n							{ printf("\n  ");}
+"'"							{BEGIN(STRING);}
+<STRING>"''"	            {BEGIN(STRING);}
+<STRING>"'"					{BEGIN(INITIAL);}
+<STRING>.					{ }
 
 
-class						{ printf("Start class declaration "); }
-private						{ printf("PRIVATE "); }
-public						{ printf("PUBLIC "); }
-published					{ printf("PUBLISHED "); }
-protected					{ printf("PROTECTED "); }
+"["							{BEGIN(ARRAY_RANGE);}
+<ARRAY_RANGE>\.				{return POINT;}
+<ARRAY_RANGE>[0-9]			{yylval.dig = atoi(yytext); return DIGIT_IN_ARR; }
+<ARRAY_RANGE>"]"			{BEGIN(INITIAL);}
+<ARRAY_RANGE>.				{return MIST_IN_ARRAY_RANGE}
 
-implimentation				{printf ("Vars model is over");}
+Integer                     { return INT; }
+Cardinal					{ return CARDINAL;}
+ShortInt					{ return SHORT_INT; }
+Int64						{ return INT64;}
+Byte						{ return BYTE; }					
+Word						{ return WORD;}
+Real						{ return REAL; }
+Real48						{ return REAL48; }
+Singl						{ return SINGL; }
+Double						{ return DOUBLE; }
+Extended					{ return EXTENDED; }
+Comp						{ return COMP; }
+Currency					{ return CURRENCY; }
+Boolean						{ return BOOLEAN; }
+var							{ return VAR; }
+const						{ return CONST;}
+begin						{ return BEGIN;}
+end							{ return END; }
+;							{ return SEMICOLON;}
+type						{ return TYPE; }
+array						{ return ARRAY; }
+of							{ return OF; }
+nil							{ return NULL; }
+record						{ return RECORD; }
+file						{ return FILE; }
+set							{ return SET; }
+if							{ return IF; }
+in							{ return IN; }
+then						{ return THEN; }
+else						{ return ELSE; }
+true						{ return TRUE; }
+false						{ return FALSE; }
+for							{ return FOR; }
+do							{ return DO; }
+downto						{ return DOWNTO; }
+while						{ return WHILE; }
+repeat						{ return REPEAT; }
+until						{ return UNTIL; }
+Break						{ return BREAK; }
+Continue					{ return CONTINUE; }
+goto						{ return GOTO; }
+label						{ return LABEL; }
+Pointer						{ return POINTER; }
+:=							{ return ASSIGMENTSTAT; }
+=							{ return EQUAL; }
+\^							{ return POINTER; }
+:							{ return COLON; }
+\(							{ return OPENPARENT; }
+\)							{ return CLOSEPARENT; }
 
-[A-Za-z_][A-Za-z0-9_]+	    { printf("Id - %s", yytext); }
-[0-9]						{ printf("intDigit - %d", atoi(yytext)); }
+
+class						{ return CLASS; }
+private						{ return PRIVATE; }
+public						{ return PUBLIC; }
+published					{ return PUBLISHED; }
+protected					{ return PROTECTED; }
+
+implimentation				{return IMPL;}
+
+[A-Za-z_][A-Za-z0-9_]+	    { yylval = yytext; return ID;}
+[0-9]						{ yylval.dig = atoi(yytext); return DIGIT; }
+[0-9]/.[0-9]			    { yylval.dbl = atof(yytext); return DBL_DIG; }
 .							{ throw yytext;}
+
 %%
