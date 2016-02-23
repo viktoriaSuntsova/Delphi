@@ -13,95 +13,126 @@
 %x LINE_COMMENT
 %x COMMENT
 %x STRING
-%x ARRAY_RANGE
 
 %%
 
-"//"						{ BEGIN(LINE_COMMENT);}
-"(*"						{ BEGIN(COMMENT);}
-"{"							{ BEGIN(COMMENT);}
+"//"						{ printf("Line Comment\n"); BEGIN(LINE_COMMENT);}
+"(*"						{ printf("Comment\n"); BEGIN(COMMENT);}
+"{"							{ printf("Comment\n"); BEGIN(COMMENT);}
 
 <LINE_COMMENT>\n			{ BEGIN(INITIAL);}
-<LINE_COMMENT>.*			{  }
+<LINE_COMMENT>.*			{ printf(yytext); }
 <COMMENT>"*)"			    {  BEGIN(INITIAL);}
-<COMMENT>"}"			    { BEGIN(INITIAL);}
+<COMMENT>"}"			    {  BEGIN(INITIAL);}
 <COMMENT>.|\n     			{  }
 
 
-"'"							{BEGIN(STRING);}
-<STRING>"''"	            {BEGIN(STRING);}
+"'"							{printf("Const str\n"); BEGIN(STRING);}
+<STRING>"''"	            {printf("'");BEGIN(STRING);}
 <STRING>"'"					{BEGIN(INITIAL);}
-<STRING>.					{ }
+<STRING>.					{printf(yytext);}
 
 
-"["							{BEGIN(ARRAY_RANGE);}
-<ARRAY_RANGE>\.				{return POINT;}
-<ARRAY_RANGE>[0-9]			{yylval.dig = atoi(yytext); return DIGIT_IN_ARR; }
-<ARRAY_RANGE>"]"			{BEGIN(INITIAL);}
-<ARRAY_RANGE>.				{return MIST_IN_ARRAY_RANGE}
+"["							{printf("[\n");}
+\.\.						{printf(yytext);printf("\n");}
+"]"			         		{printf("]\n");}
 
-Integer                     { return INT; }
-Cardinal					{ return CARDINAL;}
-ShortInt					{ return SHORT_INT; }
-Int64						{ return INT64;}
-Byte						{ return BYTE; }					
-Word						{ return WORD;}
-Real						{ return REAL; }
-Real48						{ return REAL48; }
-Singl						{ return SINGL; }
-Double						{ return DOUBLE; }
-Extended					{ return EXTENDED; }
-Comp						{ return COMP; }
-Currency					{ return CURRENCY; }
-Boolean						{ return BOOLEAN; }
-var							{ return VAR; }
-const						{ return CONST;}
-begin						{ return BEGIN;}
-end							{ return END; }
-;							{ return SEMICOLON;}
-type						{ return TYPE; }
-array						{ return ARRAY; }
-of							{ return OF; }
-nil							{ return NULL; }
-record						{ return RECORD; }
-file						{ return FILE; }
-set							{ return SET; }
-if							{ return IF; }
-in							{ return IN; }
-then						{ return THEN; }
-else						{ return ELSE; }
-true						{ return TRUE; }
-false						{ return FALSE; }
-for							{ return FOR; }
-do							{ return DO; }
-downto						{ return DOWNTO; }
-while						{ return WHILE; }
-repeat						{ return REPEAT; }
-until						{ return UNTIL; }
-Break						{ return BREAK; }
-Continue					{ return CONTINUE; }
-goto						{ return GOTO; }
-label						{ return LABEL; }
-Pointer						{ return POINTER; }
-:=							{ return ASSIGMENTSTAT; }
-=							{ return EQUAL; }
-\^							{ return POINTER; }
-:							{ return COLON; }
-\(							{ return OPENPARENT; }
-\)							{ return CLOSEPARENT; }
+Integer                     { printf("INTEGER\n"); }
+function
+result
+Cardinal					{ printf("CARDINAL\n"); }
+ShortInt					{ printf("SHORTINT\n"); }
+Int64						{ printf("INT64\n"); }
+Byte						{ printf("BYTE\n"); }					
+Word						{ printf("WORD\n"); }
+Real						{ printf("REAL\n"); }
+Real48						{ printf("REAL48\n"); }
+Singl						{ printf("SINGL\n"); }
+Double						{ printf("DOUBLE\n"); }
+Extended					{ printf("EXTENDED\n"); }
+Comp						{ printf("COMP\n"); }
+Currency					{ printf("CURREMCY\n"); }
+Boolean						{ printf("BOOLEAN\n"); }
+String						{ printf("STRING\n"); }
 
 
-class						{ return CLASS; }
-private						{ return PRIVATE; }
-public						{ return PUBLIC; }
-published					{ return PUBLISHED; }
-protected					{ return PROTECTED; }
+var							{ printf("Keyword VAR\n"); }
+const						{ printf("Keyword CONST\n"); }
+begin						{ printf("Keyword BEGIN\n"); }
+end							{ printf("Keyword END\n"); }
+;							{ printf("SEMICOLON\n"); }
+type						{ printf("Keyword TYPE\n"); }
+array						{ printf("Keyword ARRAY\n"); }
+of							{ printf("Keyword OF\n"); }
+to							{ printf("Keyword TO\n"); }
+Case						{ printf("Keyword CASE\n"); }
+nil							{ printf("Keyword NILL\n"); }
+record						{ printf("Keyword RECORD\n"); }
+file						{ printf("FILE\n"); }
+set							{ printf("Keyword SET\n"); }
+if							{ printf("Keyword IF\n"); }
+in							{ printf("Keyword IN\n"); }
+then						{ printf("Keyword THEN\n"); }
+else						{ printf("Keyword ELSE\n"); }
+true						{ printf("TRUE\n"); }
+false						{ printf("FALSE\n"); }
+for							{ printf("Keyword FOR\n"); }
+do							{ printf("Keyword DO\n"); }
+downto						{ printf("Keyword DOWNTO\n"); }
+while						{ printf("Keyword WHILE\n"); }
+repeat						{ printf("Keyword REPEAT\n"); }
+until						{ printf("Keyword UNTIL\n"); }
+Break						{ printf("Keyword BREAK\n"); }
+Continue					{ printf("Keyword CONTINUE\n"); }
+goto						{ printf("Keyword GOTO\n"); }
+label						{ printf("Keyword LABEL\n"); }
+Pointer						{ printf("POINTER\n"); }
+ShowMessage					{ printf("Procedure SHOWMESSAGE\n");}
+not							{ printf("NOT\n"); }
+and							{ printf("AND\n"); }
+or							{ printf("OR\n"); }
+xor							{ printf("XOR\n"); }
+mod							{ printf("mod\n");}
+div							{ printf("div\n");}
+:=							{ printf("assignment statement\n"); }
+=							{ printf("is equal\n"); }
+\^							{ printf("pointer\n"); }
+:							{ printf(":\n"); }
+\(							{ printf("(\n"); }
+\)							{ printf(")\n"); }
+\n							{ printf("");}
+\+							{ printf("+\n");}
+\*							{ printf("*\n");}
+\-							{ printf("-\n");}
+\/							{ printf("//\n");}
+\<\>						{ printf("<>\n");}
+>=							{ printf(">=\n");}
+\<\=					    { printf("<=\n");}
+\>							{ printf(">\n");}
+\<							{ printf("<\n");}
+,							{ printf("comma\n"); }
 
-implimentation				{return IMPL;}
+class						{ printf("Keyword CLASS\n"); }
+private						{ printf("Keyword PRIVATE\n"); }
+public						{ printf("Keyword PUBLIC\n"); }
+published					{ printf("Keyword PUBLISHED\n"); }
+protected					{ printf("Keyword PROTECTED\n"); }
+procedure					{ printf("Keyword PROCEDURE\n");}
+program						{ printf("Keyword PROGRAMM\n");}
+uses						{ printf("Keyword USES\n");}
+unit						{ printf("Keyword UNIT\n");}
 
-[A-Za-z_][A-Za-z0-9_]+	    { yylval = yytext; return ID;}
-[0-9]						{ yylval.dig = atoi(yytext); return DIGIT; }
-[0-9]/.[0-9]			    { yylval.dbl = atof(yytext); return DBL_DIG; }
-.							{ throw yytext;}
+implementation				{printf ("Keyword IMPL\n");}
+interface					{printf("Keyword INTERFASE\n");}
+
+"T"[A-Z][A-Za-z0-9]+	    {  printf("%s-type\n" , yytext);}
+[A-Za-z_][A-Za-z0-9_]*	    { printf("%s - Id \n", yytext); }
+
+[0-9]+/.[0-9]+			    { printf("%d - doubleDigit\n", atoi(yytext)); }
+[0-9]+						{ printf("%d - intDigit\n", atoi(yytext)); }
+
+
+[ \t]						{ printf("");}
+.						    { printf("UNKNOWN\n");}
 
 %%
